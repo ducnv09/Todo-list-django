@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Đăng ký{% endblock %}
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-100">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-lg border-0">
+      <div class="card-body p-5">
+        <div class="text-center mb-4">
+          <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+          <h1 class="h3 mb-0 text-dark">Tạo tài khoản</h1>
+          <p class="text-muted">Tham gia cùng chúng tôi!</p>
+        </div>
+
+        {% if form.errors %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+              <i class="fas fa-user me-2"></i>Tên đăng nhập
+            </label>
+            <input type="text"
+                   class="form-control form-control-lg {% if form.username.errors %}is-invalid{% endif %}"
+                   id="{{ form.username.id_for_label }}"
+                   name="{{ form.username.name }}"
+                   value="{{ form.username.value|default:'' }}"
+                   placeholder="Chọn tên đăng nhập"
+                   required>
+            {% if form.username.errors %}
+              <div class="invalid-feedback">
+                {% for error in form.username.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+            {% if form.username.help_text %}
+              <div class="form-text">{{ form.username.help_text }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label">
+              <i class="fas fa-lock me-2"></i>Mật khẩu
+            </label>
+            <input type="password"
+                   class="form-control form-control-lg {% if form.password1.errors %}is-invalid{% endif %}"
+                   id="{{ form.password1.id_for_label }}"
+                   name="{{ form.password1.name }}"
+                   placeholder="Tạo mật khẩu"
+                   required>
+            {% if form.password1.errors %}
+              <div class="invalid-feedback">
+                {% for error in form.password1.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+            {% if form.password1.help_text %}
+              <div class="form-text">{{ form.password1.help_text }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-4">
+            <label for="{{ form.password2.id_for_label }}" class="form-label">
+              <i class="fas fa-lock me-2"></i>Xác nhận mật khẩu
+            </label>
+            <input type="password"
+                   class="form-control form-control-lg {% if form.password2.errors %}is-invalid{% endif %}"
+                   id="{{ form.password2.id_for_label }}"
+                   name="{{ form.password2.name }}"
+                   placeholder="Nhập lại mật khẩu"
+                   required>
+            {% if form.password2.errors %}
+              <div class="invalid-feedback">
+                {% for error in form.password2.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+            {% if form.password2.help_text %}
+              <div class="form-text">{{ form.password2.help_text }}</div>
+            {% endif %}
+          </div>
+
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-success btn-lg">
+              <i class="fas fa-user-plus me-2"></i>Tạo tài khoản
+            </button>
+          </div>
+        </form>
+
+        <hr class="my-4">
+        <div class="text-center">
+          <p class="mb-0 text-muted">Đã có tài khoản?
+            <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Đăng nhập ngay</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .min-vh-100 {
+    min-height: calc(100vh - 120px);
+  }
+
+  .card {
+    border-radius: 15px;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    border: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background: linear-gradient(135deg, #4e9a2a 0%, #96d4b8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+</style>
+{% endblock %}

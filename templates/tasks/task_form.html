@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}{% if view.object %}Sửa{% else %}Thêm{% endif %} công việc{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-lg border-0">
+      <div class="card-body p-4">
+        <div class="text-center mb-4">
+          {% if view.object %}
+            <i class="fas fa-edit fa-3x text-warning mb-3"></i>
+            <h1 class="h3 mb-0 text-dark">Chỉnh sửa công việc</h1>
+            <p class="text-muted">Cập nhật thông tin công việc</p>
+          {% else %}
+            <i class="fas fa-plus-circle fa-3x text-success mb-3"></i>
+            <h1 class="h3 mb-0 text-dark">Thêm công việc mới</h1>
+            <p class="text-muted">Tạo một công việc mới để theo dõi</p>
+          {% endif %}
+        </div>
+
+        {% if form.errors %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Có lỗi xảy ra:</strong>
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">
+              <i class="fas fa-heading me-2"></i>Tiêu đề công việc
+            </label>
+            <input type="text"
+                   class="form-control form-control-lg {% if form.title.errors %}is-invalid{% endif %}"
+                   id="{{ form.title.id_for_label }}"
+                   name="{{ form.title.name }}"
+                   value="{{ form.title.value|default:'' }}"
+                   placeholder="Nhập tiêu đề công việc..."
+                   required>
+            {% if form.title.errors %}
+              <div class="invalid-feedback">
+                {% for error in form.title.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="{{ form.note.id_for_label }}" class="form-label">
+              <i class="fas fa-sticky-note me-2"></i>Ghi chú
+            </label>
+            <textarea class="form-control {% if form.note.errors %}is-invalid{% endif %}"
+                      id="{{ form.note.id_for_label }}"
+                      name="{{ form.note.name }}"
+                      rows="4"
+                      placeholder="Thêm ghi chú chi tiết về công việc...">{{ form.note.value|default:'' }}</textarea>
+            {% if form.note.errors %}
+              <div class="invalid-feedback">
+                {% for error in form.note.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="{{ form.due_at.id_for_label }}" class="form-label">
+              <i class="fas fa-calendar-alt me-2"></i>Hạn hoàn thành
+            </label>
+            <input type="datetime-local"
+                   class="form-control {% if form.due_at.errors %}is-invalid{% endif %}"
+                   id="{{ form.due_at.id_for_label }}"
+                   name="{{ form.due_at.name }}"
+                   value="{{ form.due_at.value|default:'' }}">
+            {% if form.due_at.errors %}
+              <div class="invalid-feedback">
+                {% for error in form.due_at.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+            <div class="form-text">
+              <i class="fas fa-info-circle me-1"></i>
+              Để trống nếu không có hạn cụ thể
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input"
+                     type="checkbox"
+                     id="{{ form.is_done.id_for_label }}"
+                     name="{{ form.is_done.name }}"
+                     {% if form.is_done.value %}checked{% endif %}>
+              <label class="form-check-label" for="{{ form.is_done.id_for_label }}">
+                <i class="fas fa-check-circle me-2"></i>Đánh dấu là đã hoàn thành
+              </label>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-outline-secondary btn-lg me-md-2" href="{% url 'tasks:list' %}">
+              <i class="fas fa-times me-2"></i>Hủy bỏ
+            </a>
+            <button type="submit" class="btn {% if view.object %}btn-warning{% else %}btn-success{% endif %} btn-lg">
+              {% if view.object %}
+                <i class="fas fa-save me-2"></i>Lưu thay đổi
+              {% else %}
+                <i class="fas fa-plus me-2"></i>Tạo công việc
+              {% endif %}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card {
+    border-radius: 15px;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .form-control:focus, .form-check-input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  }
+
+  .btn {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+
+  .form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+  }
+
+  .form-switch .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+  }
+</style>
+{% endblock %}

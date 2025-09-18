@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}Công việc{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-dark">
+      <i class="fas fa-clipboard-list me-2 text-primary"></i>Công việc của tôi
+    </h1>
+    <p class="text-muted mb-0">Quản lý và theo dõi công việc hàng ngày</p>
+  </div>
+  <a class="btn btn-success btn-lg shadow-sm" href="{% url 'tasks:create' %}">
+    <i class="fas fa-plus me-2"></i>Thêm công việc
+  </a>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <form class="row g-3" method="get">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="fas fa-search text-muted"></i>
+          </span>
+          <input name="q" class="form-control border-start-0" placeholder="Tìm kiếm công việc..." value="{{ request.GET.q }}">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" name="status">
+          <option value="">🔍 Tất cả trạng thái</option>
+          <option value="open" {% if request.GET.status == "open" %}selected{% endif %}>⏳ Chưa hoàn thành</option>
+          <option value="done" {% if request.GET.status == "done" %}selected{% endif %}>✅ Đã hoàn thành</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">
+          <i class="fas fa-filter me-1"></i>Lọc
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  {% for t in tasks %}
+    <div class="col-12 mb-3">
+      <div class="card border-0 shadow-sm h-100 {% if t.is_done %}bg-light{% endif %}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center mb-2">
+                {% if t.is_done %}
+                  <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                {% else %}
+                  <i class="far fa-circle text-muted fa-lg me-2"></i>
+                {% endif %}
+                <h5 class="card-title mb-0 {% if t.is_done %}text-decoration-line-through text-muted{% endif %}">
+                  {{ t.title }}
+                </h5>
+                {% if t.is_done %}
+                  <span class="badge bg-success ms-2">Hoàn thành</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark ms-2">Đang thực hiện</span>
+                {% endif %}
+              </div>
+
+              {% if t.note %}
+                <p class="card-text text-muted mb-2">
+                  <i class="fas fa-sticky-note me-1"></i>
+                  {{ t.note|truncatechars:150 }}
+                </p>
+              {% endif %}
+
+              <div class="small text-muted">
+                <i class="fas fa-calendar-plus me-1"></i>
+                <strong>Tạo:</strong> {{ t.created_at|date:"d/m/Y H:i" }}
+                {% if t.due_at %}
+                  <span class="ms-3">
+                    <i class="fas fa-calendar-check me-1"></i>
+                    <strong>Hạn:</strong>
+                    <span class="{% if not t.is_done and t.due_at < now %}text-danger fw-bold{% endif %}">
+                      {{ t.due_at|date:"d/m/Y H:i" }}
+                    </span>
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ms-3 d-flex flex-column gap-1">
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'tasks:update' t.pk %}" title="Chỉnh sửa">
+                <i class="fas fa-edit"></i>
+              </a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'tasks:delete' t.pk %}" title="Xóa">
+                <i class="fas fa-trash"></i>
+              </a>
+              <a class="btn btn-sm {% if t.is_done %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+                 href="{% url 'tasks:toggle' t.pk %}"
+                 title="{% if t.is_done %}Đánh dấu chưa xong{% else %}Đánh dấu hoàn thành{% endif %}">
+                {% if t.is_done %}
+                  <i class="fas fa-undo"></i>
+                {% else %}
+                  <i class="fas fa-check"></i>
+                {% endif %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12">
+      <div class="text-center py-5">
+        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">Chưa có công việc nào</h4>
+        <p class="text-muted">Hãy thêm công việc đầu tiên của bạn!</p>
+        <a href="{% url 'tasks:create' %}" class="btn btn-primary">
+          <i class="fas fa-plus me-2"></i>Thêm công việc mới
+        </a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav class="mt-4 d-flex justify-content-center">
+  <ul class="pagination pagination-lg shadow-sm">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&status={{ request.GET.status }}">
+          <i class="fas fa-chevron-left"></i> Trước
+        </a>
+      </li>
+    {% endif %}
+
+    <li class="page-item active">
+      <span class="page-link">
+        <i class="fas fa-file-alt me-1"></i>
+        Trang {{ page_obj.number }} / {{ paginator.num_pages }}
+      </span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&status={{ request.GET.status }}">
+          Sau <i class="fas fa-chevron-right"></i>
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+<style>
+  .card {
+    transition: all 0.3s ease;
+    border-radius: 15px;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+  }
+
+  .btn {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .pagination .page-link {
+    border-radius: 10px;
+    margin: 0 2px;
+    border: none;
+    color: #6c757d;
+  }
+
+  .pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+  }
+
+  .badge {
+    border-radius: 20px;
+    font-size: 0.75rem;
+  }
+
+  .input-group-text {
+    border-radius: 10px 0 0 10px;
+  }
+
+  .form-control, .form-select {
+    border-radius: 0 10px 10px 0;
+  }
+
+  .form-control:first-child, .form-select:only-child {
+    border-radius: 10px;
+  }
+</style>
+{% endblock %}
