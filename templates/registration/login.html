@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load socialaccount %}
 {% block title %}Đăng nhập{% endblock %}
 {% block content %}
 <div class="row justify-content-center align-items-center min-vh-100">
@@ -66,7 +67,20 @@
           </div>
         </form>
 
-        <hr class="my-4">
+        <div class="text-center my-4">
+          <div class="position-relative">
+            <hr>
+            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">hoặc</span>
+          </div>
+        </div>
+
+        <!-- Google Login Button -->
+        <div class="d-grid mb-3">
+          <a href="/accounts/google/login/" class="btn btn-outline-danger btn-lg">
+            <i class="fab fa-google me-2"></i>Đăng nhập với Google
+          </a>
+        </div>
+
         <div class="text-center">
           <p class="mb-0 text-muted">Chưa có tài khoản?
             <a href="{% url 'tasks:signup' %}" class="text-decoration-none fw-bold">Đăng ký ngay</a>
@@ -107,6 +121,16 @@
     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+
+  .btn-outline-danger {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
   }
 </style>
 {% endblock %}

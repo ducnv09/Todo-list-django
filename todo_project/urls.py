@@ -3,6 +3,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/", include("django.contrib.auth.urls")),  # login/logout/password reset
-    path("", include("tasks.urls")),                         # routes của tasks
+    path("accounts/", include("allauth.urls")),  # allauth URLs (bao gồm Google OAuth)
+    path("auth/", include("django.contrib.auth.urls")),  # Django auth URLs
+    path("api/", include("tasks.api_urls")),  # API endpoints
+    path("", include("tasks.urls")),  # Web routes của tasks
 ]
