@@ -1,0 +1,2 @@
+- sửa lại giao diện chatbot
+- thêm load lại tin nhắn
