@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 
     # Local apps
-    'tasks'
+    'tasks',
+    'chatbot'
 ]
 
 MIDDLEWARE = [
@@ -231,3 +232,6 @@ SOCIALACCOUNT_PROVIDERS['google']['APP'] = {
     'secret': config('GOOGLE_CLIENT_SECRET', default=''),
     'key': ''
 }
+
+# Gemini API Settings
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
